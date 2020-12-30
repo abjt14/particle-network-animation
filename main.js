@@ -18,51 +18,61 @@ let colorThemes = [
 		circle: '#000000',
 		line: '#000000',
 		bg: '#ff124f',
-		shadowColor: '#000000'
+		shadowColor: '#000000',
+		pFont: '#000000',
 	},
 	{
 		circle: '#2f404d',
 		line: '#3d898d',
 		bg: '#85ebd9',
-		shadowColor: '#2f404d'
+		shadowColor: '#2f404d',
+		pFont: '#2f404d',
 	},
 	{
 		circle: '#ff2a6d',
 		line: '#05d9e8',
 		bg: '#000000',
-		shadowColor: '#ff2a6d'
+		shadowColor: '#ff2a6d',
+		pFont: '#ff2a6d',
 	},
 	{
 		circle: '#9c9c9c',
 		line: '#9c9c9c',
 		bg: '#ffffff',
-		shadowColor: '#9c9c9c'
+		shadowColor: '#9c9c9c',
+		pFont: '#9c9c9c',
 	},
 	{
 		circle: '#ffffff',
 		line: '#ffffff',
 		bg: '#000000',
-		shadowColor: '#ffffff'
+		shadowColor: '#ffffff',
+		pFont: '#ffffff',
 	},
 	{
 		circle: '#fe00fe',
 		line: '#ffffff',
 		bg: '#120458',
-		shadowColor: '#fe00fe'
+		shadowColor: '#fe00fe',
+		pFont: '#fe00fe',
 	},
 	{
 		circle: '#65dc98',
 		line: '#a0ffe3',
 		bg: '#222035',
-		shadowColor: '#65dc98'
+		shadowColor: '#65dc98',
+		pFont: '#65dc98',
 	},
 	{
 		circle: '#001eff',
 		line: '#001eff',
 		bg: '#d600ff',
-		shadowColor: '#001eff'
+		shadowColor: '#001eff',
+		pFont: '#001eff',
 	},
 ];
+let autoChangeTheme = false;
+let autoChangeThemeInterval;
 
 const canvasInit = () => {
 	colorSwitch(selectedTheme);
@@ -87,6 +97,13 @@ const getRandomInt = (min, max) => {
 	min = Math.ceil(min);
 	max = Math.floor(max);
 	return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
+const getSmaller = (num1, num2) => {
+	if (num1 < num2) {
+		return num1;
+	}
+	return num2;
 }
 
 class Particle {
@@ -187,10 +204,10 @@ const updateConnectorArray = () => {
 				if ((object.x >= 0) && (object.y >= 0) && (objectInner.x >= 0) && (objectInner.y >= 0) && (object.x <= canvas.width) && (object.y <= canvas.height) && (objectInner.x <= canvas.width) && (objectInner.y <= canvas.height)) {
 					if ((Math.abs(object.x - objectInner.x) <= 150) && (Math.abs(object.y - objectInner.y) <= 150)) {
 						let lineWidth;
-						if (object.x > objectInner.x) {
-							lineWidth = (objectInner.x / object.x) * 0.4;
-						} else if (object.x < objectInner.x) {
-							lineWidth = (object.x / objectInner.x) * 0.4;
+						if ((object.x > objectInner.x) && (object.y > objectInner.y)) {
+							lineWidth = getSmaller((objectInner.x / object.x), (objectInner.y / object.y)) * 0.4;
+						} else if ((object.x < objectInner.x) && (object.y < objectInner.y)) {
+							lineWidth = getSmaller((object.x / objectInner.x), (object.y / objectInner.y)) * 0.4;
 						}
 						let check = true;
 						connectorObjects.forEach(objectTest => {
@@ -261,6 +278,7 @@ const mainLoop = (timestamp) => {
 
 const colorSwitch = () => {
 	document.querySelector('body').style.backgroundColor = colorThemes[selectedTheme].bg;
+	document.querySelector('p').style.color = colorThemes[selectedTheme].pFont;
 	canvas.style.border = `1px solid ${colorThemes[selectedTheme].bg}`;
 }
 
@@ -284,3 +302,21 @@ document.addEventListener('mouseleave', (event) => {
 	mouseX = 0;
 	mouseY = 0;
 });
+
+document.addEventListener("keydown", function(event) {
+  if (event.key.toLowerCase() == 'r') {
+		if (autoChangeTheme === false) {
+			autoChangeTheme = true;
+			autoChangeThemeInterval = setInterval(() => {
+				if (selectedTheme < (colorThemes.length - 1)) {
+					selectedTheme++;
+				} else {
+					selectedTheme = 0;
+				}
+				colorSwitch();
+			}, 1000);
+		} else {
+			clearInterval(autoChangeThemeInterval);
+		}
+	}
+})
