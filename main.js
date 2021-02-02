@@ -329,6 +329,11 @@ window.addEventListener('resize', (event) => {
 	canvas.height = (innerHeight - 2);
 	particleObjects = [];
 	connectorObjects = [];
+	if (innerWidth >= innerHeight) {
+		particleCount = parseInt(innerWidth / 20);
+	} else {
+		particleCount = parseInt(innerHeight / 20);
+	}
 	for (let i = 0; i < particleCount; i++) {
 		let newParticle = new Particle();
 		newParticle.draw();
