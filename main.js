@@ -320,3 +320,18 @@ document.addEventListener("keydown", function(event) {
 		}
 	}
 })
+
+// resize window
+let lastResizeTime = 0;
+window.addEventListener('resize', (event) => {
+	clearCanvas();
+	canvas.width = (innerWidth - 2);
+	canvas.height = (innerHeight - 2);
+	particleObjects = [];
+	connectorObjects = [];
+	for (let i = 0; i < particleCount; i++) {
+		let newParticle = new Particle();
+		newParticle.draw();
+		particleObjects.push(newParticle);
+	}
+});
